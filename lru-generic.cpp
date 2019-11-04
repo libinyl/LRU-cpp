@@ -6,11 +6,13 @@
 #include <pthread.h>
 
 /**
- *
+ * - get,put,size,clear
  * - 通用存储
  * - 线程安全
  * - O(1)存取复杂度
+ * - 命中率计算
  *
+ * 当前穿透策略: 链表头最新, 末位置有限清理
  *
  * @tparam K
  * @tparam V
@@ -44,7 +46,6 @@ public:
     size_t size() const;
     void clear();
     float hitRate() const;
-
 };
 
 template<typename K, typename V>
