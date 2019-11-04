@@ -5,9 +5,6 @@
 #include <unordered_map>
 #include <pthread.h>
 
-using namespace std;
-
-
 /**
  *
  * - 通用存储
@@ -29,8 +26,8 @@ private:
         key_t key;
         value_t value;
     } Node_t;
-    typedef list<Node_t> cacheList_t;
-    typedef unordered_map<key_t, typename cacheList_t::iterator> map_t;
+    typedef std::list<Node_t> cacheList_t;
+    typedef std::unordered_map<key_t, typename cacheList_t::iterator> map_t;
 
     int m_capacity;             // 缓存容量
     cacheList_t m_cacheList;    // node 链表
