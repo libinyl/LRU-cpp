@@ -2,6 +2,7 @@
 #include <list>
 #include <map>
 #include <iostream>
+#include <unordered_map>
 #include <pthread.h>
 
 using namespace std;
@@ -25,7 +26,7 @@ private:
         value_t value;
     } Node_t;
     typedef list<Node_t> cacheList_t;
-    typedef map<key_t, typename cacheList_t::iterator> map_t;
+    typedef unordered_map<key_t, typename cacheList_t::iterator> map_t;
 
     int m_capacity;             // 缓存容量
     cacheList_t m_cacheList;    // node 链表
