@@ -10,7 +10,11 @@ using namespace std;
 
 /**
  *
- * 通用存储/线程安全
+ * - 通用存储
+ * - 线程安全
+ * - O(1)存取复杂度
+ *
+ *
  * @tparam K
  * @tparam V
  */
@@ -31,6 +35,7 @@ private:
     int m_capacity;             // 缓存容量
     cacheList_t m_cacheList;    // node 链表
     map_t m_mp;
+    int _hit = 0, _miss = 0;    // 命中率计算
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 public:
@@ -39,6 +44,9 @@ public:
     {}
     bool get(const K &key, V &value);
     bool put(const K &key, const V &value);
+    size_t size() const;
+    void clear();
+    float hitRate() const;
 
 };
 
@@ -50,9 +58,11 @@ bool LRUCache<K, V>::get(const K &key, V &value)
     auto it = m_mp.find(key);
     // 未命中,返回 NULL
     if (it == m_mp.end()) {
+        _miss++;
         pthread_mutex_unlock(&lock);
         return false;
     }
+    _hit++;
 
     // 命中, 则把链表中此元素删除并放置最前 再返回
     auto list_it = m_mp[key];
@@ -66,6 +76,7 @@ bool LRUCache<K, V>::get(const K &key, V &value)
     return true;
 
 }
+
 template<typename K, typename V>
 bool LRUCache<K, V>::put(const K &key, const V &value)
 {
@@ -94,4 +105,27 @@ bool LRUCache<K, V>::put(const K &key, const V &value)
     pthread_mutex_unlock(&lock);
     return true;
 }
+
+template<typename K, typename V>
+size_t LRUCache<K, V>::size() const
+{
+    return m_mp.size();
+}
+
+template<typename K, typename V>
+void LRUCache<K, V>::clear()
+{
+    m_mp.clear();
+    m_cacheList.clear();
+    _hit = 0;
+    _miss = 0;
+}
+
+template<typename K, typename V>
+float LRUCache<K, V>::hitRate() const
+{
+    return _hit / (_hit + _miss);
+}
+
+
 
